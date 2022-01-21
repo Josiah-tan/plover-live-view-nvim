@@ -1,7 +1,5 @@
 M = {}
 local _sets = {}
-
-
 local _termIsInit = {}
 
 M.update = function (opts)

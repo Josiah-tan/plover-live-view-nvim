@@ -60,45 +60,45 @@ local function getCommand(command, args, file_name)
 end
 
 local function sendCommand(number, type, command)
-	-- return require("harpoon."..type).sendCommand(number, 'python3 -c "[print(i) for i in range(10000)]"\n')
 	return require("harpoon."..type).sendCommand(number, command)
 end
 
 local function gotoTerminal (opts)
-	opts = vim.tbl_deep_extend("force", _opts, opts or {})
-	require("harpoon."..opts.terminal.type).gotoTerminal(opts.terminal.number)
+	require("harpoon."..opts.viewer.terminal.type).gotoTerminal(opts.viewer.terminal.number)
 end
 
 local function initTerminal(opts)
-	opts = vim.tbl_deep_extend("force", _opts, opts or {})
-	local args = getCommandArgs(opts.terminal.command_args)
+	local args = getCommandArgs(opts.viewer.terminal.command_args)
 	local file_name = checkFilePath(opts.file_name, opts.cwd)
-	local command = getCommand(opts.terminal.command, args, file_name)
+	local command = getCommand(opts.viewer.terminal.command, args, file_name)
 	if not state.setTermIsInit(opts.file_name) then
-		sendCommand(opts.terminal.number, opts.terminal.type, command)
+		sendCommand(opts.viewer.terminal.number, opts.viewer.terminal.type, command)
+	end
+end
+
+local function gotoBuff(opts)
+	local file_name = checkFilePath(opts.file_name, opts.cwd)
+	vim.cmd("view " .. file_name)
+end
+
+local function initGotoBuffer(opts)
+	if opts.viewer.choose == "buf" then
+		gotoBuff(opts)
+	elseif opts.viewer.choose == "terminal" then
+		initTerminal(opts)
+		gotoTerminal(opts)
 	end
 end
 
 M.view = function (opts)
 	opts = vim.tbl_deep_extend("force", _opts, opts or {})
-	initTerminal(opts)
-	gotoTerminal(opts)
+	initGotoBuffer(opts)
 end
 
--- local function for_each_buf_window(bufnr, fn)
---   if not vim.api.nvim_buf_is_loaded(bufnr) then
---     return
---   end
---
---   for _, window in ipairs(vim.fn.win_findbuf(bufnr)) do
---     fn(window)
---   end
--- end
-
-local function postSplit(current_buf, terminal_buf, func, size)
+local function postSplit(current_buf, viewer_buf, func, size)
 			vim.api.nvim_set_current_buf(current_buf)
 			local current_window = vim.api.nvim_get_current_win()
-			local terminal_windows = vim.fn.win_findbuf(terminal_buf)
+			local terminal_windows = vim.fn.win_findbuf(viewer_buf)
 			for _, terminal_window in ipairs(terminal_windows) do
 				if size then
 					func(terminal_window, size)
@@ -114,20 +114,20 @@ M.splitToggle = function (opts)
 	local state_split_toggle = state.get("splitToggle")
 	if not state_split_toggle or not window.is_buf_visible(state_split_toggle) then
 		local current_buf = vim.api.nvim_get_current_buf()
-		initTerminal(opts)
-		gotoTerminal(opts)
-		local terminal_buf = vim.api.nvim_get_current_buf()
+		initGotoBuffer(opts)
+		local viewer_buf = vim.api.nvim_get_current_buf()
 		if opts.split.choose == "horizontal" then
 			vim.cmd [[split]]
-			postSplit(current_buf, terminal_buf, vim.api.nvim_win_set_height, opts.split.horizontal.size)
+			postSplit(current_buf, viewer_buf, vim.api.nvim_win_set_height, opts.split.horizontal.size)
 		else
 			vim.cmd [[vsplit]]
-			postSplit(current_buf, terminal_buf, vim.api.nvim_win_set_width, opts.split.vertical.size)
+			postSplit(current_buf, viewer_buf, vim.api.nvim_win_set_width, opts.split.vertical.size)
 		end
-		state.set("splitToggle", terminal_buf)
+		state.set("splitToggle", viewer_buf)
 	else
 		window.close_buf_if_visible(state.get("splitToggle"))
 		state.set("splitToggle", false)
 	end
 end
+
 return M
