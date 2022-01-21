@@ -1,15 +1,16 @@
 M = {}
 
-M.opts = {
-	builtins = require("plover_viewer.defaults").builtins,
-	disable_default_mappings = true
-}
+local default = require("plover_viewer.default")
+local state = require("plover_viewer.state")
+
 
 M.setup = function (opts)
-	M.opts = vim.tbl_deep_extend("force", M.opts, opts or {})
+	opts = vim.tbl_deep_extend("force", default.opts, opts or {})
+	state.update(opts)
 	if not M.opts.disable_default_mappings then
-		require("plover_viewer.defaults").mappings()
+		defaults.mappings()
 	end
 end
+
 
 return M
