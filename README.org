@@ -102,3 +102,6 @@ end)
 ** Contributing
 - feel free to raise issues or chuck a pull request if anything is unclear or doesn't work
 	- I would be happy to receive any feedback
+** Acknowledgements
+- I would like to thank:
+	- Rabbitgrowth: for telling me about tail -f, without them this plugin would not have been made
