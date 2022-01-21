@@ -1,3 +1,104 @@
-#+BEGIN_SRC lua
+* Plover-live-view-nvim
+- A customizable plugin that allows you to view any file in realtime
+** Installation and dependencies
+- Install like with any other plugin
+- example using vim-plug:
+#+BEGIN_SRC vim
+" needed for harpoon
+Plug 'nvim-lua/plenary.nvim' 
+" needed for terminal management
+Plug 'ThePrimeagen/harpoon' 
+Plug 'Josiah-tan/plover-live-view-nvim'
 #+END_SRC
+** Basic Setup
+#+BEGIN_SRC lua
+-- initializes all defaults
+require("plover_viewer").setup({
+	builtin = {
+		cwd = "path/to/your/config"
+}})
+-- some possible locations of where config could be depending on OS
+-- cwd = {"~/.config/plover/", "/mnt/c/Users/yourName/AppData/Local/plover/plover/"},
 
+-- default key bindings (disabled by default)
+-- view clippy.txt in terminal buffer
+vim.keymap.set('n', '<leader>pv', function () require("plover_viewer.builtin").view() end)
+-- split the current buffer and view clippy.txt in the terminal (togglable)
+vim.keymap.set('n', '<leader>ps', function () require("plover_viewer.builtin").splitToggle() end)
+-- view tapey_tape.txt in terminal
+vim.keymap.set('n', '<leader>pt', function () require("plover_viewer.builtin").view({file_name = "tapey_tape.txt"}) end)
+#+END_SRC
+** Custom Setup 
+- Below is the default setup for this plugin 
+	- you only have to override the parts that you want to change	 
+#+BEGIN_SRC lua
+require("plover_viewer").setup({
+builtin = {
+	viewer = {
+		choose = "terminal", -- or buf
+		buf = {
+		},
+		terminal = {
+			type = "term", -- or "tmux"
+			number = 6,
+			command = "tail",
+			command_args = {"-f"},
+		},
+	},
+	split = {
+		choose = "horizontal", -- or vertical
+		horizontal = {
+			size = 10,
+		},
+		vertical = {
+			size = nil,
+		}
+	},
+	file_name = "clippy.txt",
+	cwd = nil
+},
+disable_default_mappings = true
+)}
+#+END_SRC
+*** builtin
+- file\under{}name = "clippy.txt"
+	- the file to live view
+- cwd = nil
+	- str: location of config files
+**** viewer
+- choose = "terminal"
+	- "terminal": use the terminal for live viewing
+	- "buf": use a vim buffer for live viewing
+- terminal.type = "term"
+	- "term": use an neovim terminal
+	- "tmux": use tmux terminal (note that splits for tmux are not supported yet)
+- terminal.number = "6"
+	- number: unique number assigned to a terminal
+- terminal.command = "tail"
+	- str: command to run in the terminal
+- terminal.command\under{}args = {"-f"}
+	- table[str]: command arguments to run in the terminal
+**** split
+- choose = "horizontal"
+	- "horizontal": open split horizontally
+	- "vertical": open split vertically
+- horizontal.size = 10
+	- height as in the number of rows (only for horizontal split)
+	- set to nil for a normal split
+- vertical.size = nil
+	- width as in the number of columns (only for vertical split)
+	- set to nil for a normal split
+** Custom Mappings
+- you can override the opts given previously to setup() in your keymaps
+	- for example if you wanted a vertical split instead of horizontal:
+#+BEGIN_SRC lua
+vim.keymap.set('n', '<leader>pw', function ()
+	require("plover_viewer.builtin").splitToggle({
+		split = {
+			choose = "vertical"
+		}})
+end)
+#+END_SRC
+** Contributing
+- feel free to raise issues or chuck a pull request if anything is unclear or doesn't work
+	- I would be happy to receive any feedback
