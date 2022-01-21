@@ -9,7 +9,7 @@ M.builtin = {
 			type = "term", -- or "tmux"
 			number = 6,
 			command = "tail",
-			command_args = {"-f", "---disable-notify"}, -- disable-notify, makes plugin work for wsl
+			command_args = {"-f", "---disable-inotify"}, -- disable-inotify, makes plugin work for wsl
 		},
 	},
 	split = {
