@@ -93,6 +93,7 @@ end
 M.view = function (opts)
 	opts = vim.tbl_deep_extend("force", _opts, opts or {})
 	initGotoBuffer(opts)
+	vim.cmd [[norm! G]]
 end
 
 local function postSplit(current_buf, viewer_buf, func, size)
