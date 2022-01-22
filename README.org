@@ -1,5 +1,12 @@
 * Plover-live-view-nvim
-- A customizable plugin that allows you to view any file in realtime
+- A customizable plugin that allows you to view any file in realtime through nvim
+** Some Use Cases
+- Rabbitgrowth's [[plover-tapey-tape][https://github.com/rabbitgrowth/plover-tapey-tape]] 
+	- Output file (tapey/under{}tape.txt)
+	- Alternative to Plover's builtin paper tape
+- tckmn's [[plover-clippy][https://github.com/tckmn/plover_clippy]]
+	- Output file: clippy.txt
+	- Alternative to Plover's suggestions, only logs information when a word is stroked inefficiently
 ** Installation and dependencies
 - Install like with any other plugin
 - example using vim-plug:
@@ -108,3 +115,4 @@ end)
 ** Acknowledgements
 - I would like to thank:
 	- Rabbitgrowth: for telling me about tail -f, without them this plugin would not have been made
+	 - Make sure to checkout their plugin ([[plover-tapey-tape][https://github.com/rabbitgrowth/plover-tapey-tape]]) for a good alternative to Plover's builtin paper tape
