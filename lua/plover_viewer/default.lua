@@ -26,8 +26,20 @@ M.builtin = {
 
 M.mappings = function ()
 	vim.keymap.set('n', '<leader>pv', function () require("plover_viewer.builtin").view() end)
+	-- split the current buffer and view clippy.txt in the terminal (togglable)
 	vim.keymap.set('n', '<leader>ps', function () require("plover_viewer.builtin").splitToggle() end)
-	vim.keymap.set('n', '<leader>pt', function () require("plover_viewer.builtin").view({file_name = "tapey_tape.txt"}) end)
+	-- view tapey_tape.txt in terminal
+	vim.keymap.set('n', '<leader>pt', function () RELOAD("plover_viewer.builtin").splitToggle({
+		file_name = "tapey_tape.txt",
+		viewer = {
+			terminal = {
+				number = 7 -- use a different terminal
+			}
+		},
+		split = {
+			choose = "vertical"
+		}
+	}) end)
 end
 
 M.opts = {
