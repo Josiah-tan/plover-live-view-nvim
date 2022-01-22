@@ -71,7 +71,7 @@ local function initTerminal(opts)
 	local args = getCommandArgs(opts.viewer.terminal.command_args)
 	local file_name = checkFilePath(opts.file_name, opts.cwd)
 	local command = getCommand(opts.viewer.terminal.command, args, file_name)
-	if not state.setTermIsInit(opts.file_name) then
+	if not state.setTermIsInit(opts.viewer.terminal.number) then
 		sendCommand(opts.viewer.terminal.number, opts.viewer.terminal.type, command)
 	end
 end
@@ -110,9 +110,14 @@ local function postSplit(current_buf, viewer_buf, func, size)
 			vim.api.nvim_set_current_win(current_window)
 end
 
+local function getBufState (fn, number)
+	return string.format("%s%d", fn, number)
+end
+
 M.splitToggle = function (opts)
 	opts = vim.tbl_deep_extend("force", _opts, opts or {})
-	local state_split_toggle = state.get("splitToggle")
+	local bufId = getBufState("splitToggle", opts.viewer.terminal.number)
+	local state_split_toggle = state.get(bufId)
 	if not state_split_toggle or not window.is_buf_visible(state_split_toggle) then
 		local current_buf = vim.api.nvim_get_current_buf()
 		initGotoBuffer(opts)
@@ -124,10 +129,10 @@ M.splitToggle = function (opts)
 			vim.cmd [[vsplit]]
 			postSplit(current_buf, viewer_buf, vim.api.nvim_win_set_width, opts.split.vertical.size)
 		end
-		state.set("splitToggle", viewer_buf)
+		state.set(bufId, viewer_buf)
 	else
-		window.close_buf_if_visible(state.get("splitToggle"))
-		state.set("splitToggle", false)
+		window.close_buf_if_visible(state.get(bufId))
+		state.set(state.get(bufId), false)
 	end
 end
 
