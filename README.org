@@ -18,7 +18,10 @@ require("plover_viewer").setup({
 		cwd = "path/to/your/config"
 }})
 -- some possible locations of where config could be depending on OS
--- cwd = {"~/.config/plover/", "/mnt/c/Users/yourName/AppData/Local/plover/plover/"},
+-- cwd = {"%USERPROFILE%\AppData\Local\plover", "~/Library/Application Support/plover", "~/.config/plover"}
+-- Windows: `%USERPROFILE%\AppData\Local\plover`
+-- macOS: `~/Library/Application Support/plover`
+-- Linux: `~/.config/plover`
 
 -- default key bindings (disabled by default)
 -- view clippy.txt in terminal buffer
