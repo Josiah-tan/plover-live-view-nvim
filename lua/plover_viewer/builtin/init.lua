@@ -2,6 +2,7 @@ M = {}
 local _opts = require("plover_viewer.state").opts.builtin
 local state = require("plover_viewer.state")
 local window = require("plover_viewer.window")
+local path = require("plover_viewer.path")
 
 
 local function getCommandArgs(command_args)
@@ -10,49 +11,6 @@ local function getCommandArgs(command_args)
 		res = res .. name .. " "
 	end
 	return res
-end
-
-function table.shallow_copy(t)
-	local t2 = {}
-	for k,v in pairs(t) do
-		t2[k] = v
-	end
-	return t2
-end
-
-local function getConfigDir()
-	-- not sure if this is right
-	return vim.fn.trim(vim.fn.system('python3 -c "from plover.oslayer.config import CONFIG_DIR;print(CONFIG_DIR)"'))
-end
-
-local function checkReadable(file_name, cwds)
-	local _file_name = file_name
-	if type(cwds) ~= "table" then
-		cwds = {cwds}
-	end
-	local copy = table.shallow_copy(cwds)
-	for _, cwd in ipairs(copy) do
-		file_name = cwd .. _file_name
-		if vim.fn.filereadable(vim.fn.expand(file_name)) == 1 then
-			return file_name
-		end
-	end
-end
-
-local function checkFilePath(file_name, cwds)
-	local res = checkReadable(file_name, cwds)
-	if res then
-		return res
-	end
-	res = checkReadable(file_name, getConfigDir())
-	if res then
-		return res
-	end
-	res = checkReadable(file_name, "")
-	if res then
-		return res
-	end
-	error("file does not exist, please include a cwd")
 end
 
 local function getCommand(command, args, file_name)
@@ -69,7 +27,7 @@ end
 
 local function initTerminal(opts)
 	local args = getCommandArgs(opts.viewer.terminal.command_args)
-	local file_name = checkFilePath(opts.file_name, opts.cwd)
+	local file_name = path.checkFilePath(opts.file_name, opts.cwd)
 	local command = getCommand(opts.viewer.terminal.command, args, file_name)
 	if not state.setTermIsInit(opts.viewer.terminal.number) then
 		sendCommand(opts.viewer.terminal.number, opts.viewer.terminal.type, command)
@@ -77,7 +35,7 @@ local function initTerminal(opts)
 end
 
 local function gotoBuff(opts)
-	local file_name = checkFilePath(opts.file_name, opts.cwd)
+	local file_name = path.checkFilePath(opts.file_name, opts.cwd)
 	vim.cmd("view " .. file_name)
 end
 
