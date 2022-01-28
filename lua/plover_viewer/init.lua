@@ -7,7 +7,7 @@ local state = require("plover_viewer.state")
 M.setup = function (opts)
 	opts = vim.tbl_deep_extend("force", default.opts, opts or {})
 	state.update(opts)
-	if not M.opts.disable_default_mappings then
+	if not opts.disable_default_mappings then
 		defaults.mappings()
 	end
 end
