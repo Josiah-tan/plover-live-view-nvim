@@ -1,3 +1,4 @@
+local state = require("plover_viewer.state")
 M = {}
 local function for_each_buf_window(bufnr, fn)
   if not vim.api.nvim_buf_is_loaded(bufnr) then
@@ -19,18 +20,22 @@ local function close_buf_windows(bufnr)
   end)
 end
 
-local function isBufVisible(bufnr)
+local function _isBufVisible(bufnr)
   local windows = vim.fn.win_findbuf(bufnr)
 
   return #windows > 0
 end
 
-M.is_buf_visible = function (bufnr)
-	return isBufVisible(bufnr)
+M.isBufVisible = function (bufId)
+	bufId = state.get(bufId)
+	if bufId and _isBufVisible(bufId) then
+		return true
+	end
+	return false
 end
 
-M.close_buf_if_visible = function (bufnr)
-	if isBufVisible(bufnr) then
+M.closeBufIfVisible = function (bufnr)
+	if _isBufVisible(bufnr) then
 		close_buf_windows(bufnr)
 	end
 end

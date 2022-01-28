@@ -62,7 +62,7 @@ builtin = {
 			type = "term", -- or "tmux"
 			number = 6,
 			command = "tail",
-			command_args = {"-f"},
+			args = {"-f"},
 		},
 	},
 	split = {

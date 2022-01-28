@@ -9,7 +9,7 @@ M.builtin = {
 			type = "term", -- or "tmux"
 			number = 6,
 			command = "tail",
-			command_args = {"-f", "---disable-inotify"}, -- disable-inotify, makes plugin work for wsl
+			args = {"-f", "---disable-inotify"}, -- disable-inotify, makes plugin work for wsl
 		},
 	},
 	split = {
@@ -20,6 +20,12 @@ M.builtin = {
 		vertical = {
 			size = nil,
 		}
+	},
+	hooks = {
+		initEOF = true,
+		-- not actually implemented with autocommands...
+		bufWinEnter = function(opts) print("entering!", vim.api.nvim_get_current_buf()) end, -- require("autoread.builtin").autoReadStart,
+		bufWinLeave = function(opts) print("leaving!", vim.api.nvim_get_current_buf()) end, -- require("autoread.builtin").autoReadStop
 	},
 	file_name = "clippy.txt",
 }

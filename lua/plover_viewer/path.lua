@@ -27,7 +27,7 @@ local function checkReadable(file_name, cwds)
 	end
 end
 
-M.checkFilePath = function (file_name, cwds)
+M.getFilePath = function (file_name, cwds)
 	local res = checkReadable(file_name, cwds)
 	if res then
 		return res

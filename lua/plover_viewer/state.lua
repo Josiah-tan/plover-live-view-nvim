@@ -1,17 +1,8 @@
 M = {}
 local _sets = {}
-local _termIsInit = {}
 
 M.update = function (opts)
 	M.opts = vim.tbl_deep_extend("force", M.opts or {}, opts or {})
-end
-
-M.setTermIsInit = function (value)
-	if _termIsInit[value] ~= nil then
-		return true
-	end
-	_termIsInit[value] = true
-	return false
 end
 
 M.set = function (key, value)
